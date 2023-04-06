@@ -1,27 +1,54 @@
 import numpy as np
 
-# Заданий вектор i
-i = np.array([[6], [2], [1]])
 
-# Матриця масштабування S
-S = np.array([[1.5, 0, 0],
-              [0, 2.7, 0],
-              [0, 0, 1.0]])
+def scaling(sx, sy, i):
+    S = np.array([[sx, 0, 0],
+                  [0, sy, 0],
+                  [0, 0, 1.0]])
+    return np.dot(S, i)
 
-# Матриця обертання R
-angle = np.radians(15.0)
-R = np.array([[np.cos(angle), -np.sin(angle), 0],
-              [np.sin(angle), np.cos(angle), 0],
-              [0, 0, 1]])
 
-# Матриця переміщення T
-T = np.array([[1.0, 0, 2.0],
-              [0, 1.0, 2.0],
-              [0, 0, 1.0]])
+def rotation(theta, i):
+    theta = np.radians(theta)
+    R = np.array([[np.cos(theta), -np.sin(theta), 0],
+                  [np.sin(theta), np.cos(theta), 0],
+                  [0, 0, 1]])
+    return np.dot(R, i)
 
-# Композитне матричне перетворення
-M = np.dot(S, np.dot(R, np.dot(T, i)))
 
-# Результат
-j = M[:2]
+def translation(tx, ty, i):
+    T = np.array([[1.0, 0, tx],
+                  [0, 1.0, ty],
+                  [0, 0, 1.0]])
+    return np.dot(T, i)
+
+
+i1 = float(input("Введіть перший параметр вектору: "))
+i2 = float(input("Введіть другий параметр вектору: "))
+i = np.array([[i1], [i2], [1]])
+
+a = i
+operations = ['T', 'S', 'R']
+
+for _ in range(3):
+    op = input('Виберіть операцію: T, R, чи S\n').upper()
+    while op not in operations:
+        op = input('Виберіть операцію: T, R, чи S\n').upper()
+
+    if op == 'S':
+        sx = float(input('Масштабування - х: '))
+        sy = float(input('Масштабування - у: '))
+        a = scaling(sx, sy, a)
+
+    if op == 'T':
+        tx = float(input('Переміщення - x: '))
+        ty = float(input('Переміщення - y: '))
+        a = translation(tx, ty, a)
+
+    if op == 'R':
+        theta = float(input('Кут обертання: '))
+        a = rotation(theta, a)
+
+j = a[:2]
+print("Результатом композитного матричного перетворення є:")
 print(j)
